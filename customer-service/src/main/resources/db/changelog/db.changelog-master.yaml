@@ -73,3 +73,14 @@ databaseChangeLog:
                   type: TIMESTAMP
                   constraints:
                     nullable: false
+
+  - changeSet:
+      id: 003-add-sent-at-to-outbox
+      author: you
+      changes:
+        - addColumn:
+            tableName: outbox_events
+            columns:
+              - column:
+                  name: sent_at
+                  type: TIMESTAMP

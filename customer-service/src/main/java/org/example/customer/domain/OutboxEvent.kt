@@ -25,8 +25,21 @@ data class OutboxEvent(
     val payload: String = "",
 
     @Column(nullable = false)
-    val status: String = "PENDING",
+    var status: String = "PENDING",
 
     @Column(nullable = false)
-    val createdAt: Instant = Instant.now()
-)
+    val createdAt: Instant = Instant.now(),
+
+    @Column
+    var sentAt: Instant? = null
+) {
+    fun markAsSent() {
+        this.status = "SENT"
+        this.sentAt = Instant.now()
+    }
+
+    fun markAsFailed() {
+        this.status = "FAILED"
+        this.sentAt = Instant.now()
+    }
+}

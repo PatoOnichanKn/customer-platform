@@ -3,7 +3,7 @@ package org.example.customer.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.example.customer.domain.Customer
 import org.example.customer.domain.OutboxEvent
-import org.example.customer.event.CustomerCreatedEvent
+import org.example.customer.messaging.CustomerCreatedEvent
 import org.example.customer.repository.CustomerRepository
 import org.example.customer.repository.OutboxRepository
 import org.springframework.stereotype.Service
