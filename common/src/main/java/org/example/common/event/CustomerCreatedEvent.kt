@@ -1,5 +1,5 @@
 // common/src/main/kotlin/org/example/common/dto/CustomerCreatedEvent.kt
-package org.example.customer.messaging
+package org.example.common.event
 
 import java.util.*
 
